@@ -1,7 +1,9 @@
 package com.lambdaschool.school.service;
 
+
 import com.lambdaschool.school.SchoolApplication;
 import com.lambdaschool.school.model.Course;
+import com.lambdaschool.school.model.Instructor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -18,12 +20,12 @@ import javax.persistence.EntityNotFoundException;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes= SchoolApplication.class)
+@SpringBootTest(classes = SchoolApplication.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CourseServiceImplTest {
 
-    @Autowired
-    private CourseService courseService;
+    @Autowired private CourseService courseService;
+    @Autowired private InstructorService instructorService;
 
     @Before
     public void AsetUp() throws Exception {
@@ -59,5 +61,16 @@ public class CourseServiceImplTest {
     @Test
     public void GfindCourseById() {
         assertEquals("Data Science", courseService.findCourseById(1).getCoursename());
+    }
+
+    @Test
+    public void HtestSave() throws Exception {
+        Course temp=new Course();
+        temp.setCoursename("Pot");
+
+        Course added=courseService.save(temp);
+        assertNotNull(added);
+        Course found=courseService.findCourseById(added.getCourseid());
+        assertEquals(found.getCoursename(),added.getCoursename());
     }
 }
