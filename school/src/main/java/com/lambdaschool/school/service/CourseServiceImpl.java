@@ -1,9 +1,11 @@
 package com.lambdaschool.school.service;
 
 import com.lambdaschool.school.model.Course;
+import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.repository.CourseRepository;
 import com.lambdaschool.school.view.CountStudentsInCourses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,10 @@ public class CourseServiceImpl implements CourseService
     private CourseRepository courserepos;
 
     @Override
-    public ArrayList<Course> findAll()
+    public ArrayList<Course> findAll(Pageable pageable)
     {
         ArrayList<Course> list = new ArrayList<>();
-        courserepos.findAll().iterator().forEachRemaining(list::add);
+        courserepos.findAll(pageable).iterator().forEachRemaining(list::add);
         return list;
     }
 
@@ -42,5 +44,26 @@ public class CourseServiceImpl implements CourseService
         {
             throw new EntityNotFoundException(Long.toString(id));
         }
+    }
+
+    @Override
+    public Course findCourseById(long id) {
+        if(courserepos.findById(id).isPresent())
+            return courserepos.findById(id).get();
+        else
+            throw new EntityNotFoundException(Long.toString(id));
+    }
+
+    @Override
+    public Course save(Course toSave) {
+        Course checker=new Course();
+        if(toSave.getCoursename()!=""){
+            checker.setCoursename(toSave.getCoursename());
+        }
+        if(toSave.getInstructor()!=null){
+            checker.setInstructor(toSave.getInstructor());
+        }
+
+        return courserepos.save(checker);
     }
 }
